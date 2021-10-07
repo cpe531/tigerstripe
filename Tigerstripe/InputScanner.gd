@@ -45,20 +45,25 @@ func _process(_delta):
 	f = f and not diagonal
 	b = b and not diagonal
 	d = d and not diagonal
+	var n = not u and not f and not b and not d and not diagonal
 	
 	# check for cross inputs
 	if u and d:
 		u = false
 		d = false
+		n = true
 	if f and b:
 		f = false
 		b = false
+		n = true
 	if uf and ub:
 		uf = false
 		ub = false
+		n = true
 	if df and db:
 		df = false
 		db = false
+		n = true
 	
 	# send signals
 	if u and last_stick_input != Stick.U:
@@ -85,10 +90,9 @@ func _process(_delta):
 	elif db and last_stick_input != Stick.DB:
 		last_stick_input = Stick.DB
 		emit_signal("input", Stick.DB, buttons)
-	else:
-		if last_stick_input != Stick.N:
-			last_stick_input = Stick.N
-			emit_signal("input", Stick.N, buttons)
+	elif n and last_stick_input != Stick.N:
+		last_stick_input = Stick.N
+		emit_signal("input", Stick.N, buttons)
 
 
 func switch_side():

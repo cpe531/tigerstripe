@@ -9,12 +9,18 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Character",
+"language": "GDScript",
+"path": "res://Character.gd"
+}, {
 "base": "Node",
 "class": "InputScanner",
 "language": "GDScript",
 "path": "res://InputScanner.gd"
 } ]
 _global_script_class_icons={
+"Character": "",
 "InputScanner": ""
 }
 
@@ -22,6 +28,10 @@ _global_script_class_icons={
 
 config/name="Tigerstripe"
 config/icon="res://icon.png"
+
+[display]
+
+window/size/resizable=false
 
 [input]
 
