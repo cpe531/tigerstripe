@@ -6,8 +6,8 @@ signal input(stick_direction, buttons)
 
 
 var on_left_side = true
-var last_stick_input = Stick.N
-var last_button_input = Buttons.N
+var last_stick_input = Stick.N setget , get_stick_input
+var last_button_input = Buttons.N setget , get_buttons
 
 
 enum Stick {
@@ -97,3 +97,11 @@ func _process(_delta):
 
 func switch_side():
 	on_left_side = not on_left_side
+
+
+func get_stick_input():
+	return last_stick_input
+
+
+func get_buttons():
+	return last_button_input
