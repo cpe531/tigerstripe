@@ -85,6 +85,13 @@ func crouch():
 	_animator.play("Crouch")
 
 
+func switch_side():
+	$Sprite.set_flip_h(not $Sprite.is_flipped_h())
+	_scanner.switch_side()
+	_speed_f = -_speed_f
+	_speed_b = -_speed_b
+
+
 func is_airborne():
 	return _state == State.AIRBORNE
 

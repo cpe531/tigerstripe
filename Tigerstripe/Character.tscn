@@ -109,7 +109,7 @@ anims/WalkForward = SubResource( 5 )
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 hframes = 18
-frame = 4
+frame = 1
 
 [node name="BodyBox" type="CollisionShape2D" parent="."]
 position = Vector2( -0.794586, 13.5082 )
