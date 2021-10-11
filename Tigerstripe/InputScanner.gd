@@ -8,6 +8,10 @@ signal input(stick_direction, buttons)
 var on_left_side = true
 var last_stick_input = Stick.N setget , get_stick_input
 var last_button_input = Buttons.N setget , get_buttons
+var _stick_up
+var _stick_right
+var _stick_left
+var _stick_down
 
 
 enum Stick {
@@ -20,6 +24,14 @@ enum Stick {
 enum Buttons { N, L, M, H }
 
 
+func _init(player_slot = 1):
+	var p_text = "p1_" if player_slot == 1 else "p2_"
+	_stick_up = p_text + "stick_up"
+	_stick_right = p_text + "stick_right"
+	_stick_left = p_text + "stick_left"
+	_stick_down = p_text + "stick_down"
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
@@ -29,10 +41,10 @@ func _ready():
 func _process(_delta):
 	# check all presses at once
 	var buttons = Buttons.N
-	var u = Input.is_action_pressed("stick_up")
-	var r = Input.is_action_pressed("stick_right")
-	var l = Input.is_action_pressed("stick_left")
-	var d = Input.is_action_pressed("stick_down")
+	var u = Input.is_action_pressed(_stick_up)
+	var r = Input.is_action_pressed(_stick_right)
+	var l = Input.is_action_pressed(_stick_left)
+	var d = Input.is_action_pressed(_stick_down)
 	var f = (r and on_left_side) or (l and not on_left_side)
 	var b = (l and on_left_side) or (r and not on_left_side)
 	var uf = u and f

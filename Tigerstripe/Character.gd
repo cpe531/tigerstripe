@@ -11,6 +11,9 @@ enum State {
 const _FLOOR_PADDING = 2	# padding above the floor collision box
 
 
+export var player_slot : int = 1
+
+
 var _scanner : InputScanner
 var _animator : AnimationPlayer
 var _max_hp : int = 100
@@ -25,7 +28,7 @@ var _state = State.AIRBORNE setget , get_state
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	_scanner = InputScanner.new()
+	_scanner = InputScanner.new(player_slot)
 	add_child(_scanner)
 	assert(_scanner.connect("input", self, "_on_input") == OK)
 	_animator = get_node("AnimationPlayer")
