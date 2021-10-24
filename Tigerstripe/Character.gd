@@ -43,10 +43,14 @@ func _ready():
 
 
 func _physics_process(delta):
-	var c = move_and_collide(_velocity * delta)
+	var vel = _velocity * delta
+	var c = move_and_collide(vel)
 	if c:
-		_on_hitting_floor()
-
+		if c.collider is Floor:
+			_on_hitting_floor()
+		else:	# assuming that the collision is with the other character
+			# move the opposing character out of the way
+			var _x = c.collider.move_and_collide(Vector2(vel.x, 0))
 	if _state == State.AIRBORNE:
 		_velocity.y += _gravity
 
