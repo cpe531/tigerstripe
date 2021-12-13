@@ -2,10 +2,10 @@ class_name Character
 extends KinematicBody2D
 
 
-enum State {
-	STANDING, CROUCHING, AIRBORNE,
-	BLOCK_STANDING, BLOCK_CROUCHING,
-}
+# character states
+const ST_AIRBORNE = State.STNC_AIRB | State.CNCL_NORM
+const ST_STANDING = State.STNC_GRND | State.CNCL_MVMT | State.CNCL_NORM
+const ST_CROUCHING = State.STNC_CRCH | State.CNCL_NORM
 
 
 const _FLOOR_PADDING = 2	# padding above the floor collision box
@@ -23,7 +23,7 @@ var _speed_f : int = 300	# forward walking speed
 var _speed_b : int = 250	# back walking speed
 var _jump_force : int = 1600
 var _velocity := Vector2() setget , get_velocity
-var _state = State.AIRBORNE setget , get_state
+var _state : int = ST_STANDING setget , get_state
 
 
 # Called when the node enters the scene tree for the first time.
@@ -51,12 +51,12 @@ func _physics_process(delta):
 		else:	# assuming that the collision is with the other character
 			# move the opposing character out of the way
 			var _x = c.collider.move_and_collide(Vector2(vel.x, 0))
-	if _state == State.AIRBORNE:
+	if _state & State.STNC_AIRB == State.STNC_AIRB:
 		_velocity.y += _gravity
 
 
 func stand():
-	_state = State.STANDING
+	_state = ST_STANDING
 	_velocity = Vector2.ZERO
 	_animator.play("StandingIdle")
 
@@ -72,7 +72,7 @@ func walk_back():
 
 
 func jump():
-	_state = State.AIRBORNE
+	_state = ST_AIRBORNE
 	_velocity.y = -_jump_force
 	_animator.play("Jump")
 
@@ -90,6 +90,7 @@ func jump_back():
 func crouch():
 	_velocity.x = 0
 	_animator.play("Crouch")
+	_state = ST_CROUCHING
 
 
 func switch_side():
@@ -99,11 +100,11 @@ func switch_side():
 	_speed_b = -_speed_b
 
 
-func is_airborne():
-	return _state == State.AIRBORNE
+func is_airborne() -> bool:
+	return _state & State.STNC_AIRB == State.STNC_AIRB
 
 
-func get_state():
+func get_state() -> int:
 	return _state
 
 
@@ -114,43 +115,33 @@ func get_velocity():
 func _on_hitting_floor():
 	# pad the character up just a bit
 	var _x = move_and_collide(Vector2(0, -_FLOOR_PADDING))
-	# reset velocity
-	_velocity = Vector2.ZERO
+	# re-stand character
+	stand()
 	# get inputs again to continue movement
 	var stick = _scanner.get_stick_input()
 	var buttons = _scanner.get_buttons()
-	_state = State.STANDING
 	_on_input(stick, buttons)
 
 
 func _on_input(stick_dir, _buttons):
-	var grounded = _state != State.AIRBORNE
-	
-	match stick_dir:
-		InputScanner.Stick.N:
-			if grounded:
+	# check for movement
+	if _state & State.CNCL_MVMT == State.CNCL_MVMT:
+		match stick_dir:
+			InputScanner.Stick.N:
 				stand()
-		InputScanner.Stick.F:
-			if grounded:
+			InputScanner.Stick.F:
 				walk_forward()
-		InputScanner.Stick.B:
-			if grounded:
+			InputScanner.Stick.B:
 				walk_back()
-		InputScanner.Stick.U:
-			if grounded:
+			InputScanner.Stick.U:
 				jump()
-		InputScanner.Stick.UF:
-			if grounded:
+			InputScanner.Stick.UF:
 				jump_forward()
-		InputScanner.Stick.UB:
-			if grounded:
+			InputScanner.Stick.UB:
 				jump_back()
-		InputScanner.Stick.D:
-			if grounded:
+			InputScanner.Stick.D:
 				crouch()
-		InputScanner.Stick.DF:
-			if grounded:
+			InputScanner.Stick.DF:
 				crouch()
-		InputScanner.Stick.DB:
-			if grounded:
+			InputScanner.Stick.DB:
 				crouch()
