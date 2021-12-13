@@ -17,6 +17,8 @@ const CNCL_SPEC : int = 128	# special cancellable
 const CNCL_SUPS : int = 256	# super special cancellable
 const CNCL_ULTS : int = 512	# ultra special cancellable
 
+const BLOCKABLE : int = 1024	# can character block?
+
 
 
 

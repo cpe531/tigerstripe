@@ -5,7 +5,7 @@ extends KinematicBody2D
 # character states
 const ST_AIRBORNE = State.STNC_AIRB | State.CNCL_NORM
 const ST_STANDING = State.STNC_GRND | State.CNCL_MVMT | State.CNCL_NORM
-const ST_CROUCHING = State.STNC_CRCH | State.CNCL_NORM
+const ST_CROUCHING = State.STNC_CRCH | State.CNCL_NORM | State.CNCL_STNC
 
 
 const _FLOOR_PADDING = 2	# padding above the floor collision box
@@ -118,30 +118,32 @@ func _on_hitting_floor():
 	# re-stand character
 	stand()
 	# get inputs again to continue movement
-	var stick = _scanner.get_stick_input()
-	var buttons = _scanner.get_buttons()
-	_on_input(stick, buttons)
+	var inputs = _scanner.get_inputs()
+	_on_input(inputs)
 
 
-func _on_input(stick_dir, _buttons):
+func _on_input(inputs):
+	# check if crouching state has been lifted
+	if (_state & State.CNCL_STNC == State.CNCL_STNC) and inputs & Inputs.D == 0:
+		stand()
 	# check for movement
 	if _state & State.CNCL_MVMT == State.CNCL_MVMT:
-		match stick_dir:
-			InputScanner.Stick.N:
+		match inputs:
+			Inputs.N:
 				stand()
-			InputScanner.Stick.F:
+			Inputs.F:
 				walk_forward()
-			InputScanner.Stick.B:
+			Inputs.B:
 				walk_back()
-			InputScanner.Stick.U:
+			Inputs.U:
 				jump()
-			InputScanner.Stick.UF:
+			Inputs.UF:
 				jump_forward()
-			InputScanner.Stick.UB:
+			Inputs.UB:
 				jump_back()
-			InputScanner.Stick.D:
+			Inputs.D:
 				crouch()
-			InputScanner.Stick.DF:
+			Inputs.DF:
 				crouch()
-			InputScanner.Stick.DB:
+			Inputs.DB:
 				crouch()
